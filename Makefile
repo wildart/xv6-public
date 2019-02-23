@@ -1,8 +1,13 @@
 CSI375_CFLAGS ?=
 PRINT_SYSCALLS ?= 0
+USE_BUILTINS ?= 0
 
 ifeq ($(PRINT_SYSCALLS), 1)
 CSI375_CFLAGS += -DPRINT_SYSCALLS
+endif
+
+ifeq ($(USE_BUILTINS), 1)
+CSI375_CFLAGS += -DUSE_BUILTINS
 endif
 
 OBJS = \
@@ -231,6 +236,12 @@ ifndef CPUS
 CPUS := 2
 endif
 QEMUOPTS = -drive file=fs.img,index=1,media=disk,format=raw -drive file=xv6.img,index=0,media=disk,format=raw -smp $(CPUS) -m 512 $(QEMUEXTRA)
+
+run:
+	make qemu-nox
+
+debug:
+	make qemu-nox-gdb
 
 qemu: fs.img xv6.img
 	$(QEMU) -serial mon:stdio $(QEMUOPTS)
