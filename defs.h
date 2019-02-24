@@ -189,12 +189,6 @@ void            clearpteu(pde_t *pgdir, char *uva);
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
 
-#define NUL 0
-#ifndef NULL
-#define NULL NUL
-#endif  // NULL
-
-#define TRUE 1
-#define FALSE 0
-#define RETURN_SUCCESS 0
-#define RETURN_FAILURE -1
+#ifdef CUSTOM_XV6
+#include "custom.h"
+#endif // CUSTOM_XV6

@@ -141,6 +141,88 @@ getcmd(char *buf, int nbuf)
   return 0;
 }
 
+#ifdef USE_BUILTINS
+// ***** processing for shell builtins begins here *****
+
+int
+strncmp(const char *p, const char *q, uint n)
+{
+    while(n > 0 && *p && *p == *q)
+      n--, p++, q++;
+    if(n == 0)
+      return 0;
+    return (uchar)*p - (uchar)*q;
+}
+int
+setbuiltin(char *p)
+{
+  int i;
+  int rc;
+
+  p += strlen("_set");
+  while (strncmp(p, " ", 1) == 0) p++; // chomp spaces
+  if (strncmp("uid", p, 3) == 0) {
+    p += strlen("uid");
+    while (strncmp(p, " ", 1) == 0) p++; // chomp spaces
+    i = atoi(p);
+    rc = (setuid(i));
+    if (rc == 0)
+      return 0;
+  } else
+  if (strncmp("gid", p, 3) == 0) {
+    p += strlen("gid");
+    while (strncmp(p, " ", 1) == 0) p++; // chomp spaces
+    i = atoi(p);
+    rc = (setgid(i));
+    if (rc == 0)
+      return 0;
+  }
+  printf(2, "Invalid _set parameter\n");
+  return -1;
+}
+
+int
+getbuiltin(char *p)
+{
+  p += strlen("_get");
+  while (strncmp(p, " ", 1) == 0) p++; // chomp spaces
+  if (strncmp("uid", p, 3) == 0) {
+    printf(2, "%d\n", getuid());
+    return 0;
+  }
+  if (strncmp("gid", p, 3) == 0) {
+    printf(2, "%d\n", getgid());
+    return 0;
+  }
+  printf(2, "Invalid _get parameter\n");
+  return -1;
+}
+
+typedef int funcPtr_t(char *);
+typedef struct {
+  char       *cmd;
+  funcPtr_t  *name;
+} dispatchTableEntry_t;
+
+// Use a simple function dispatch table (FDT) to process builtin commands
+dispatchTableEntry_t fdt[] = {
+  {"_set", setbuiltin},
+  {"_get", getbuiltin}
+};
+int FDTcount = sizeof(fdt) / sizeof(fdt[0]); // # entris in FDT
+
+void
+dobuiltin(char *cmd) {
+  int i;
+
+  for (i=0; i<FDTcount; i++)
+    if (strncmp(cmd, fdt[i].cmd, strlen(fdt[i].cmd)) == 0)
+     (*fdt[i].name)(cmd);
+}
+
+// ***** processing for shell builtins ends here *****
+#endif
+
 int
 main(void)
 {
@@ -164,6 +246,12 @@ main(void)
         printf(2, "cannot cd %s\n", buf+3);
       continue;
     }
+#ifdef USE_BUILTINS
+    if (buf[0]=='_') {     // assume it is a builtin command
+      dobuiltin(buf);
+      continue;
+    }
+#endif
     if(fork1() == 0)
       runcmd(parsecmd(buf));
     wait();

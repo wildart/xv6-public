@@ -1,5 +1,9 @@
 // Routines to let C code use special x86 instructions.
 
+#ifdef CUSTOM_XV6
+#include "custom-kernel.h"
+#endif // CUSTOM_XV6
+
 static inline uchar
 inb(ushort port)
 {

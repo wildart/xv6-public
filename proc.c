@@ -38,10 +38,10 @@ struct cpu*
 mycpu(void)
 {
   int apicid, i;
-  
+
   if(readeflags()&FL_IF)
     panic("mycpu called with interrupts enabled\n");
-  
+
   apicid = lapicid();
   // APIC IDs are not guaranteed to be contiguous. Maybe we should have
   // a reverse map, or reserve a register to store &cpus[i].
@@ -124,7 +124,7 @@ userinit(void)
   extern char _binary_initcode_start[], _binary_initcode_size[];
 
   p = allocproc();
-  
+
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
     panic("userinit: out of memory?");
@@ -275,7 +275,7 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
-  
+
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for exited children.
@@ -325,10 +325,17 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
+#ifdef CUSTOM_XV6
+  int idle;  // for checking if processor is idle
+#endif // CUSTOM_XV6
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
+
+#ifdef CUSTOM_XV6
+    idle = 1;  // assume idle unless we schedule a process
+#endif // CUSTOM_XV6
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -339,6 +346,9 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+#ifdef CUSTOM_XV6
+      idle = 0;  // not idle this timeslice
+#endif // CUSTOM_XV6
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -351,7 +361,13 @@ scheduler(void)
       c->proc = 0;
     }
     release(&ptable.lock);
-
+#ifdef CUSTOM_XV6
+    // if idle, wait for next interrupt
+    if (idle) {
+      sti();
+      hlt();
+    }
+#endif // CUSTOM_XV6
   }
 }
 
@@ -418,7 +434,7 @@ void
 sleep(void *chan, struct spinlock *lk)
 {
   struct proc *p = myproc();
-  
+
   if(p == 0)
     panic("sleep");
 
