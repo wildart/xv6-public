@@ -90,6 +90,7 @@ sys_uptime(void)
   return xticks;
 }
 
+#ifdef CUSTOM_XV6
 // Shutting down the computer
 int
 sys_halt(void)
@@ -98,3 +99,4 @@ sys_halt(void)
   outw( 0x604, 0x0 | 0x2000);
   return 0;
 }
+#endif // CUSTOM_XV6

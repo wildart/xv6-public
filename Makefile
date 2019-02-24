@@ -1,13 +1,35 @@
-CSI375_CFLAGS ?=
+# Set lab number here
+LAB_NUMBER ?= 0
+
+LAB_CFLAGS ?= -DCUSTOM_XV6
 PRINT_SYSCALLS ?= 0
 USE_BUILTINS ?= 0
 
+ifeq ($(LAB_CFLAGS), -DCUSTOM_XV6)
+CUSTOM_UPROGS += _halt
+endif
+
 ifeq ($(PRINT_SYSCALLS), 1)
-CSI375_CFLAGS += -DPRINT_SYSCALLS
+LAB_CFLAGS += -DPRINT_SYSCALLS
 endif
 
 ifeq ($(USE_BUILTINS), 1)
-CSI375_CFLAGS += -DUSE_BUILTINS
+LAB_CFLAGS += -DUSE_BUILTINS
+endif
+
+ifeq ($(LAB_NUMBER), 0)
+LAB_CFLAGS += -DLAB0
+CUSTOM_UPROGS += _hello _head
+endif
+
+ifeq ($(LAB_NUMBER), 1)
+LAB_CFLAGS += -DLAB1
+CUSTOM_UPROGS += _head _date
+endif
+
+ifeq ($(LAB_NUMBER), 2)
+LAB_CFLAGS += -DLAB1 -DLAB2 -DUSE_BUILTINS
+CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid _p2-test
 endif
 
 OBJS = \
@@ -90,7 +112,7 @@ OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
 CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
-CFLAGS += $(CSI375_CFLAGS)
+CFLAGS += $(LAB_CFLAGS)
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
 # FreeBSD ld wants ``elf_i386_fbsd''
 LDFLAGS += -m $(shell $(LD) -V | grep elf_i386 2>/dev/null | head -n 1)
@@ -194,9 +216,8 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
-	_hello\
-	_head\
-	_halt\
+
+UPROGS += $(CUSTOM_UPROGS)
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
