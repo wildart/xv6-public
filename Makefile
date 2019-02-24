@@ -307,23 +307,22 @@ dist:
 	sed '/CUT HERE/,$$d' Makefile >dist/Makefile
 	echo >dist/runoff.spec
 	cp $(EXTRA) dist
+	chmod a+x dist/*pl
 
 dist-test:
-	rm -rf dist
-	make dist
+	$(MAKE) dist
 	rm -rf dist-test
 	mkdir dist-test
 	cp dist/* dist-test
-	cd dist-test; $(MAKE) print
-	cd dist-test; $(MAKE) bochs || true
-	cd dist-test; $(MAKE) qemu
+	cd dist-test; $(MAKE) run
 
 # update this rule (change rev#) when it is time to
 # make a new revision.
 tar:
-	rm -rf /tmp/xv6
-	mkdir -p /tmp/xv6
-	cp dist/* dist/.gdbinit.tmpl /tmp/xv6
-	(cd /tmp; tar cf - xv6) | gzip >xv6-rev10.tar.gz  # the next one will be 10 (9/17)
+	$(MAKE) dist
+	@echo
+	@echo Did you remember to update runoff.list?
+	@echo
+	(tar cf - dist) | gzip >xv6-Lab$(LAB_NUMBER).tar
 
 .PHONY: dist-test dist
