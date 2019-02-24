@@ -112,6 +112,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  // set start time
+  p->start_ticks = uptime();
+
   return p;
 }
 
@@ -532,6 +535,18 @@ procdump(void)
   char *state;
   uint pc[10];
 
+#if defined(LAB1)
+#define HEADER "\nPID\tName\t        Elapsed\tState  Size\t PCs\n"
+#elif defined(LAB2)
+#define HEADER "\nPID\tName\t        UID\tGID\tPPID\tElapsed\tCPU\tState  Size\t PCs\n"
+#elif defined(LAB3) || defined (LAB4)
+#define HEADER "\nPID\tName\t        UID\tGID\tPPID\tPrio\tElapsed\tCPU\tState  Size\t PCs\n"
+#else
+#define HEADER "\n"
+#endif
+
+  cprintf(HEADER); // Show header
+
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
@@ -539,7 +554,24 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
+
+#if defined(LAB1) || defined(LAB2) || defined(LAB3) || defined (LAB4)
+    cprintf("%d\t%s\t        ", p->pid, p->name); // show pid & name
+#if defined(LAB1)
+    uint tick_diff, sec, ms;
+    tick_diff = uptime() - p->start_ticks;
+    sec = tick_diff/TPS;
+    ms = tick_diff%TPS;
+    cprintf("%d.%d\t", sec, ms); // elapsed
+#elif defined(LAB2)
+    // code for lab 2;
+#elif defined(LAB3) || defined (LAB4)
+    // code for lab 3 & 4;
+#endif
+    cprintf("%s %d\t", state, p->sz); // show state & size
+#else
     cprintf("%d %s %s", p->pid, state, p->name);
+#endif
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
@@ -547,4 +579,15 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+uint
+uptime(void)
+{
+  uint xticks;
+
+  acquire(&tickslock);
+  xticks = ticks;
+  release(&tickslock);
+  return xticks;
 }
