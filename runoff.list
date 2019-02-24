@@ -86,3 +86,4 @@ custom-kernel.h
 halt.c
 hello.c
 head.c
+date.c
