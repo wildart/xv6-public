@@ -64,6 +64,15 @@ sys_sleep(void)
 
   if(argint(0, &n) < 0)
     return -1;
+#ifdef USE_ATOMIC
+  ticks0 = ticks;
+  while(ticks - ticks0 < n){
+    if(myproc()->killed){
+      return -1;
+    }
+    sleep(&ticks, (struct spinlock *)NULL);
+  }
+#else
   acquire(&tickslock);
   ticks0 = ticks;
   while(ticks - ticks0 < n){
@@ -74,6 +83,8 @@ sys_sleep(void)
     sleep(&ticks, &tickslock);
   }
   release(&tickslock);
+#endif // USE_ATOMIC
+
   return 0;
 }
 
@@ -83,10 +94,13 @@ int
 sys_uptime(void)
 {
   uint xticks;
-
+#ifdef USE_ATOMIC
+  xticks = ticks;
+#else
   acquire(&tickslock);
   xticks = ticks;
   release(&tickslock);
+#endif // USE_ATOMIC
   return xticks;
 }
 

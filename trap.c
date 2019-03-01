@@ -11,8 +11,14 @@
 // Interrupt descriptor table (shared by all CPUs).
 struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
+#ifdef USE_ATOMIC
+// set alignment to 32-bit for ticks. See Intel® 64 and IA-32 Architectures
+// Software Developer’s Manual, Vol 3A, 8.1.1 Guaranteed Atomic Operations.
+uint ticks __attribute__ ((aligned (4)));
+#else
 struct spinlock tickslock;
 uint ticks;
+#endif // USE_ATOMIC
 
 void
 tvinit(void)
@@ -23,7 +29,9 @@ tvinit(void)
     SETGATE(idt[i], 0, SEG_KCODE<<3, vectors[i], 0);
   SETGATE(idt[T_SYSCALL], 1, SEG_KCODE<<3, vectors[T_SYSCALL], DPL_USER);
 
+#ifndef USE_ATOMIC
   initlock(&tickslock, "time");
+#endif // USE_ATOMIC
 }
 
 void
@@ -49,10 +57,15 @@ trap(struct trapframe *tf)
   switch(tf->trapno){
   case T_IRQ0 + IRQ_TIMER:
     if(cpuid() == 0){
+#ifdef USE_ATOMIC
+      atom_inc((int *)&ticks);
+      wakeup(&ticks);
+#else
       acquire(&tickslock);
       ticks++;
       wakeup(&ticks);
       release(&tickslock);
+#endif // USE_ATOMIC
     }
     lapiceoi();
     break;

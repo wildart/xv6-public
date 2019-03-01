@@ -4,6 +4,7 @@ LAB_NUMBER ?= 0
 LAB_CFLAGS ?= -DCUSTOM_XV6
 PRINT_SYSCALLS ?= 0
 USE_BUILTINS ?= 0
+USE_ATOMIC ?= 1
 
 ifeq ($(LAB_CFLAGS), -DCUSTOM_XV6)
 CUSTOM_UPROGS += _halt
@@ -15,6 +16,10 @@ endif
 
 ifeq ($(USE_BUILTINS), 1)
 LAB_CFLAGS += -DUSE_BUILTINS
+endif
+
+ifeq ($(USE_ATOMIC), 1)
+LAB_CFLAGS += -DUSE_ATOMIC
 endif
 
 ifeq ($(LAB_NUMBER), 0)

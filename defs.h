@@ -163,7 +163,9 @@ void            timerinit(void);
 void            idtinit(void);
 extern uint     ticks;
 void            tvinit(void);
+#ifndef USE_ATOMIC
 extern struct spinlock tickslock;
+#endif // USE_ATOMIC
 
 // uart.c
 void            uartinit(void);

@@ -6,7 +6,7 @@
 int
 main(int argc, char *argv[])
 {
-    printf(1, "Hello World\n");
+    printf(1, "Hello World (uptime %d)\n", uptime());
     exit();
 }
 #endif // LAB0
