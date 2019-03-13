@@ -93,15 +93,7 @@ sys_sleep(void)
 int
 sys_uptime(void)
 {
-  uint xticks;
-#ifdef USE_ATOMIC
-  xticks = ticks;
-#else
-  acquire(&tickslock);
-  xticks = ticks;
-  release(&tickslock);
-#endif // USE_ATOMIC
-  return xticks;
+  return uptime();
 }
 
 #ifdef CUSTOM_XV6
@@ -114,3 +106,17 @@ sys_halt(void)
   return 0;
 }
 #endif // CUSTOM_XV6
+
+#ifdef LAB1
+int
+sys_date(void)
+{
+  struct rtcdate *d;
+
+  if(argptr(0, (void*)&d, sizeof(struct rtcdate)) < 0)
+    return RETURN_FAILURE;
+
+  cmostime(d);
+  return RETURN_SUCCESS;
+}
+#endif // LAB1
