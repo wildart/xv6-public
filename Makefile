@@ -1,5 +1,5 @@
 # Set lab number here
-LAB_NUMBER ?= 1
+LAB_NUMBER ?= 0
 
 LAB_CFLAGS ?= -DCUSTOM_XV6
 PRINT_SYSCALLS ?= 0
@@ -34,7 +34,7 @@ endif
 
 ifeq ($(LAB_NUMBER), 2)
 LAB_CFLAGS += -DLAB1 -DLAB2 -DUSE_BUILTINS
-CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid _p2-test
+CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid _lab2-test
 endif
 
 OBJS = \
