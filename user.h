@@ -24,7 +24,9 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int halt(void);
+#ifdef LAB1
 int date(struct rtcdate*);
+#endif
 
 // ulib.c
 int stat(const char*, struct stat*);
