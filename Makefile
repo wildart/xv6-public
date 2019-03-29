@@ -1,5 +1,5 @@
 # Set lab number here
-LAB_NUMBER ?= 0
+LAB_NUMBER ?= 2
 
 LAB_CFLAGS ?= -DCUSTOM_XV6
 PRINT_SYSCALLS ?= 0

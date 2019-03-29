@@ -120,3 +120,41 @@ sys_date(void)
   return RETURN_SUCCESS;
 }
 #endif // LAB1
+
+#ifdef LAB2
+uint
+sys_getuid(void)
+{
+  return RETURN_SUCCESS;
+}
+
+uint
+sys_getgid(void)
+{
+  return RETURN_SUCCESS;
+}
+
+uint
+sys_getppid(void)
+{
+  return RETURN_SUCCESS;
+}
+
+int
+sys_setuid(void)
+{
+  return RETURN_SUCCESS;
+}
+
+int
+sys_setgid(void)
+{
+  return RETURN_SUCCESS;
+}
+
+int
+sys_getprocs(void)
+{
+  return RETURN_SUCCESS;
+}
+#endif // LAB2

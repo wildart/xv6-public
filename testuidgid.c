@@ -3,6 +3,7 @@
 #ifdef LAB2
 #include "types.h"
 #include "user.h"
+#include "custom.h"
 
 static void
 uidTest(uint nval)

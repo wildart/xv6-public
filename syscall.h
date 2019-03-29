@@ -22,3 +22,9 @@
 #define SYS_close  21
 #define SYS_halt   22
 #define SYS_date   23
+#define SYS_getuid 24
+#define SYS_getgid 25
+#define SYS_getppid 26
+#define SYS_setuid 27
+#define SYS_setgid 28
+#define SYS_getprocs 29

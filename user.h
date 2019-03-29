@@ -1,3 +1,5 @@
+#include "uproc.h"
+
 struct stat;
 struct rtcdate;
 
@@ -26,7 +28,15 @@ int uptime(void);
 int halt(void);
 #ifdef LAB1
 int date(struct rtcdate*);
-#endif
+#endif // LAB1
+#ifdef LAB2
+uint getuid(void);     // UID of the current process
+uint getgid(void);     // GID of the current process
+uint getppid(void);    // PPID of the current process
+int setuid(uint);     // set UID
+int setgid(uint);     // set GID
+int getprocs(uint max, struct uproc* table);
+#endif // LAB2
 
 // ulib.c
 int stat(const char*, struct stat*);
