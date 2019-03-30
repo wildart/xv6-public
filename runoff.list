@@ -87,3 +87,9 @@ halt.c
 hello.c
 head.c
 date.c
+uproc.h
+ps.c
+time.c
+testsetuid.c
+testuidgid.c
+lab2-test.c
