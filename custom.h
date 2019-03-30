@@ -11,7 +11,7 @@
 #define NULL NUL
 #endif  // NULL
 
-#define TPS 1000   // ticks-per-second
-#define SCHED_INTERVAL (TPS/100)  // see trap.c
+#define TPS 100   // ticks-per-second
+#define SCHED_INTERVAL (TPS/10)  // see trap.c
 
 #endif  // CUSTOM_INCLUDE
