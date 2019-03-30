@@ -441,8 +441,10 @@ sleep(void *chan, struct spinlock *lk)
   if(p == 0)
     panic("sleep");
 
-  if(lk == 0)
+#ifndef USE_ATOMIC
+  if(lk == NULL)
     panic("sleep without lk");
+#endif // USE_ATOMIC
 
   // Must acquire ptable.lock in order to
   // change p->state and then call sched.
@@ -452,6 +454,9 @@ sleep(void *chan, struct spinlock *lk)
   // so it's okay to release lk.
   if(lk != &ptable.lock){  //DOC: sleeplock0
     acquire(&ptable.lock);  //DOC: sleeplock1
+#ifdef USE_ATOMIC
+    if(lk != NULL)
+#endif
     release(lk);
   }
   // Go to sleep.
@@ -466,6 +471,9 @@ sleep(void *chan, struct spinlock *lk)
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
     release(&ptable.lock);
+#ifdef USE_ATOMIC
+    if(lk != NULL)
+#endif
     acquire(lk);
   }
 }
