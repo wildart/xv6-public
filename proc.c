@@ -112,8 +112,16 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+#ifdef LAB1
   // set start time
   p->start_ticks = uptime();
+#endif //LAB1
+
+#ifdef LAB2
+  // set default UID & GID
+  p->uid = DEFAULT_UID;
+  p->gid = DEFAULT_GID;
+#endif //LAB2
 
   return p;
 }
@@ -214,6 +222,12 @@ fork(void)
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
+
+#ifdef LAB2
+  // Set UID & GID of the parent process
+  np->uid = curproc->uid;
+  np->gid = curproc->gid;
+#endif //LAB2
 
   acquire(&ptable.lock);
 

@@ -125,30 +125,59 @@ sys_date(void)
 uint
 sys_getuid(void)
 {
-  return RETURN_SUCCESS;
+  return myproc()->uid;
 }
 
 uint
 sys_getgid(void)
 {
-  return RETURN_SUCCESS;
+  return myproc()->gid;
 }
 
 uint
 sys_getppid(void)
 {
-  return RETURN_SUCCESS;
+  struct proc *cproc = myproc();
+  return cproc->parent == NULL ? cproc->pid : cproc->parent->pid;
 }
 
 int
 sys_setuid(void)
 {
+  struct proc *cproc = myproc();
+  uint newid;
+
+  // get new id value
+  if(argptr(0, (void*)&newid, sizeof(uint)) < 0)
+    return RETURN_FAILURE;
+
+  // check id value range
+  if(newid < 0 || newid > 32767)
+    return RETURN_FAILURE;
+
+  // set new id
+  cproc->uid = newid;
+
   return RETURN_SUCCESS;
 }
 
 int
 sys_setgid(void)
 {
+  struct proc *cproc = myproc();
+  uint newid;
+
+  // get new id value
+  if(argptr(0, (void*)&newid, sizeof(uint)) < 0)
+    return RETURN_FAILURE;
+
+  // check id value range
+  if(newid < 0 || newid > 32767)
+    return RETURN_FAILURE;
+
+  // set new id
+  cproc->gid = newid;
+
   return RETURN_SUCCESS;
 }
 
