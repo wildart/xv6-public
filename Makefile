@@ -1,28 +1,11 @@
 # Set lab number here
 LAB_NUMBER ?= 0
 
-USE_CUSTOM_XV6 ?= 1
+USE_CUSTOM_XV6 ?= 0
 PRINT_SYSCALLS ?= 0
 USE_BUILTINS ?= 0
-USE_ATOMIC ?= 0
+USE_ATOMIC ?= 1
 LAB_CFLAGS ?=
-
-ifeq ($(USE_CUSTOM_XV6), 1)
-LAB_CFLAGS += -DCUSTOM_XV6
-CUSTOM_UPROGS += _halt
-endif
-
-ifeq ($(PRINT_SYSCALLS), 1)
-LAB_CFLAGS += -DPRINT_SYSCALLS
-endif
-
-ifeq ($(USE_BUILTINS), 1)
-LAB_CFLAGS += -DUSE_BUILTINS
-endif
-
-ifeq ($(USE_ATOMIC), 1)
-LAB_CFLAGS += -DUSE_ATOMIC
-endif
 
 ifeq ($(LAB_NUMBER), 0)
 LAB_CFLAGS += -DLAB0
@@ -30,13 +13,33 @@ CUSTOM_UPROGS += _hello _head
 endif
 
 ifeq ($(LAB_NUMBER), 1)
+USE_CUSTOM_XV6 = 1
 LAB_CFLAGS += -DLAB1
 CUSTOM_UPROGS += _head _date
 endif
 
 ifeq ($(LAB_NUMBER), 2)
-LAB_CFLAGS += -DLAB1 -DLAB2 -DUSE_BUILTINS
+USE_CUSTOM_XV6 = 1
+USE_BUILTINS = 1
+LAB_CFLAGS += -DLAB1 -DLAB2
 CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid _lab2-test
+endif
+
+ifeq ($(USE_CUSTOM_XV6), 1)
+LAB_CFLAGS += -DCUSTOM_XV6
+CUSTOM_UPROGS += _halt
+
+ifeq ($(USE_ATOMIC), 1)
+LAB_CFLAGS += -DUSE_ATOMIC
+endif
+
+ifeq ($(USE_BUILTINS), 1)
+LAB_CFLAGS += -DUSE_BUILTINS
+endif
+endif
+
+ifeq ($(PRINT_SYSCALLS), 1)
+LAB_CFLAGS += -DPRINT_SYSCALLS
 endif
 
 OBJS = \
