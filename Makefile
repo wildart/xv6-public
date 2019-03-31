@@ -1,12 +1,14 @@
 # Set lab number here
-LAB_NUMBER ?= 2
+LAB_NUMBER ?= 0
 
-LAB_CFLAGS ?= -DCUSTOM_XV6
+USE_CUSTOM_XV6 ?= 1
 PRINT_SYSCALLS ?= 0
 USE_BUILTINS ?= 0
 USE_ATOMIC ?= 0
+LAB_CFLAGS ?=
 
-ifeq ($(LAB_CFLAGS), -DCUSTOM_XV6)
+ifeq ($(USE_CUSTOM_XV6), 1)
+LAB_CFLAGS += -DCUSTOM_XV6
 CUSTOM_UPROGS += _halt
 endif
 
@@ -67,6 +69,10 @@ OBJS = \
 	vectors.o\
 	vm.o\
 
+ifeq ($(USE_CUSTOM_XV6), 1)
+OBJS += custom.o
+endif
+
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
 
@@ -115,7 +121,7 @@ AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
 OBJDUMP = $(TOOLPREFIX)objdump
-CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O2 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer
+CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -O1 -Wall -MD -ggdb -m32 -Werror -fno-omit-frame-pointer
 CFLAGS += $(shell $(CC) -fno-stack-protector -E -x c /dev/null >/dev/null 2>&1 && echo -fno-stack-protector)
 CFLAGS += $(LAB_CFLAGS)
 ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
@@ -185,6 +191,10 @@ vectors.S: vectors.pl
 
 ULIB = ulib.o usys.o printf.o umalloc.o
 
+ifeq ($(USE_CUSTOM_XV6), 1)
+ULIB += custom.o
+endif
+
 _%: %.o $(ULIB)
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $@ $^
 	$(OBJDUMP) -S $@ > $*.asm
@@ -229,7 +239,7 @@ fs.img: mkfs README $(UPROGS)
 
 -include *.d
 
-clean: 
+clean:
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
 	*.o *.d *.asm *.sym vectors.S bootblock entryother \
 	initcode initcode.out kernel xv6.img fs.img kernelmemfs \

@@ -83,6 +83,7 @@ kernel.ld
 # custom
 custom.h
 custom-kernel.h
+custom.c
 halt.c
 hello.c
 head.c

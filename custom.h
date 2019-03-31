@@ -14,4 +14,8 @@
 #define TPS 100   // ticks-per-second
 #define SCHED_INTERVAL (TPS/10)  // see trap.c
 
+int atoo(const char*);
+char* itoa(int, char*);
+char* ftoa(float, char*, uint);
+
 #endif  // CUSTOM_INCLUDE
