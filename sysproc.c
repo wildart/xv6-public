@@ -70,7 +70,7 @@ sys_sleep(void)
     if(myproc()->killed){
       return -1;
     }
-    sleep(&ticks, (struct spinlock *)NULL);
+    sleep(&ticks, (struct spinlock *)0);
   }
 #else
   acquire(&tickslock);

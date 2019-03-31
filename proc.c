@@ -442,7 +442,7 @@ sleep(void *chan, struct spinlock *lk)
     panic("sleep");
 
 #ifndef USE_ATOMIC
-  if(lk == NULL)
+  if(lk == 0)
     panic("sleep without lk");
 #endif // USE_ATOMIC
 
@@ -455,7 +455,7 @@ sleep(void *chan, struct spinlock *lk)
   if(lk != &ptable.lock){  //DOC: sleeplock0
     acquire(&ptable.lock);  //DOC: sleeplock1
 #ifdef USE_ATOMIC
-    if(lk != NULL)
+    if(lk != 0)
 #endif
     release(lk);
   }
@@ -472,7 +472,7 @@ sleep(void *chan, struct spinlock *lk)
   if(lk != &ptable.lock){  //DOC: sleeplock2
     release(&ptable.lock);
 #ifdef USE_ATOMIC
-    if(lk != NULL)
+    if(lk != 0)
 #endif
     acquire(lk);
   }
