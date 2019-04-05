@@ -1,10 +1,10 @@
 # Set lab number here
-LAB_NUMBER ?= 0
+LAB_NUMBER ?= 3
 
 USE_CUSTOM_XV6 ?= 0
 PRINT_SYSCALLS ?= 0
 USE_BUILTINS ?= 0
-USE_ATOMIC ?= 1
+USE_ATOMIC ?= 0
 LAB_CFLAGS ?=
 
 ifeq ($(LAB_NUMBER), 0)
@@ -23,6 +23,13 @@ USE_CUSTOM_XV6 = 1
 USE_BUILTINS = 1
 LAB_CFLAGS += -DLAB1 -DLAB2
 CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid _lab2-test
+endif
+
+ifeq ($(LAB_NUMBER), 3)
+USE_CUSTOM_XV6 = 1
+USE_BUILTINS = 1
+LAB_CFLAGS += -DLAB1 -DLAB2 -DLAB3
+CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid
 endif
 
 ifeq ($(USE_CUSTOM_XV6), 1)
