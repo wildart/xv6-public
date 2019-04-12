@@ -94,3 +94,6 @@ time.c
 testsetuid.c
 testuidgid.c
 lab2-test.c
+lab4-test.c
+testsched.c
+testsetprio.c

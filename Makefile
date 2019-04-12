@@ -1,5 +1,5 @@
 # Set lab number here
-LAB_NUMBER ?= 3
+LAB_NUMBER ?= 4
 
 USE_CUSTOM_XV6 ?= 0
 PRINT_SYSCALLS ?= 0
@@ -30,6 +30,12 @@ USE_CUSTOM_XV6 = 1
 USE_BUILTINS = 1
 LAB_CFLAGS += -DLAB1 -DLAB2 -DLAB3
 CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid
+endif
+
+ifeq ($(LAB_NUMBER), 4)
+USE_CUSTOM_XV6 = 1
+LAB_CFLAGS += -DLAB1 -DLAB2 -DLAB3 -DLAB4
+CUSTOM_UPROGS += _head _date _time _ps _testsetuid _testuidgid _testsetprio _testsched _lab4-test
 endif
 
 ifeq ($(USE_CUSTOM_XV6), 1)
