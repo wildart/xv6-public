@@ -14,6 +14,8 @@
 #define TPS 100   // ticks-per-second
 #define SCHED_INTERVAL (TPS/10)  // see trap.c
 
+#define MAXPRIO 6  // see proc.c
+
 int atoo(const char*);
 char* itoa(int, char*);
 char* ftoa(float, char*, uint);

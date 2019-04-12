@@ -16,9 +16,25 @@ static char *states[] = {
 [ZOMBIE]    "zombie"
 };
 
+#ifdef LAB3
+struct ptrs {
+  struct proc* head;
+  struct proc* tail;
+};
+
+#define statecount NELEM(states)
+#endif // LAB3
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
+#ifdef LAB3
+  struct ptrs list[statecount];
+#endif // LAB3
+#ifdef LAB4
+  struct ptrs ready[MAXPRIO+1];
+  uint PromoteAtTime;
+#endif // LAB4
 } ptable;
 
 static struct proc *initproc;
