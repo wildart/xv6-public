@@ -97,3 +97,4 @@ lab2-test.c
 lab4-test.c
 testsched.c
 testsetprio.c
+lab4-priority.c
